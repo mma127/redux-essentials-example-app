@@ -51,8 +51,6 @@ export const PostsList = () => {
     content = <div>{error}</div>
   }
 
-
-
   return (
     <section className="posts-list">
       <h2>Posts</h2>
