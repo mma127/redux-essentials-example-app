@@ -18,7 +18,7 @@ export const UserPosts = ({ match }) => {
 
   const title = `${user.name}'s Posts`
 
-  const renderedPosts = userPosts.map(post => <PostExcerpt post={post} />)
+  const renderedPosts = userPosts.map(post => <PostExcerpt key={post.id} post={post} />)
   return (
     <section className="posts-list">
       <h2>{title}</h2>

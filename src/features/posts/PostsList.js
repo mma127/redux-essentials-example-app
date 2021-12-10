@@ -45,7 +45,7 @@ export const PostsList = () => {
     // Sort posts in reverse chronological order by datetime string
     const orderedPosts = posts.slice().sort((a,b) => b.date.localeCompare(a.date))
     content = orderedPosts.map(post => (
-      <PostExcerpt post={post} />
+      <PostExcerpt key={post.id} post={post} />
     ))
   } else if (postStatus === 'failure') {
     content = <div>{error}</div>

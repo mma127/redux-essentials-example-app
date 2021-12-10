@@ -20,7 +20,7 @@ export const UsersList = () => {
   if (usersLoadingStatus === "pending") {
     content = <Spinner text="Loading..." />
   } else {
-    const renderedUsers = users.map(user => <UserBlock user={user} />)
+    const renderedUsers = users.map(user => <UserBlock key={user.id} user={user} />)
     content = <ul>{renderedUsers}</ul>
   }
 
