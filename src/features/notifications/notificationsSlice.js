@@ -1,11 +1,15 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createEntityAdapter, createSlice } from "@reduxjs/toolkit";
 import { client } from '../../api/client'
 
-const initialState = {
-  notifications: [],
+const notificationsAdapter = createEntityAdapter({
+  sortComparer: (a, b) => b.date.localeCompare(a.date)
+})
+
+
+const initialState = notificationsAdapter.getInitialState({
   status: "idle",
   error: null
-}
+})
 
 export const fetchNotifications = createAsyncThunk(
   'notifications/fetchNotifications',
@@ -22,8 +26,7 @@ const notificationsSlice = createSlice({
   initialState,
   reducers: {
     markAllNotificationsRead(state, action) {
-      const allNotifications = state.notifications
-      allNotifications.forEach(notification => {
+      Object.values(state.entities).forEach(notification => {
         notification.read = true
       })
     }
@@ -35,12 +38,11 @@ const notificationsSlice = createSlice({
       })
       .addCase(fetchNotifications.fulfilled, (state, action) => {
         state.status = "success"
-        state.notifications.push(...action.payload)
-        state.notifications.forEach(notification => {
+        notificationsAdapter.upsertMany(state, action.payload)
+        Object.values(state.entities).forEach(notification => {
           // Any read notifications are no longer new
           notification.isNew = !notification.read
         })
-        state.notifications.sort((a,b) => b.date.localeCompare(a.date))
       })
       .addCase(fetchNotifications.rejected, (state, action) => {
         state.status = "failure"
@@ -53,5 +55,8 @@ export const { markAllNotificationsRead } = notificationsSlice.actions
 
 export default notificationsSlice.reducer
 
-export const selectAllNotifications = state => state.notifications.notifications
+export const {
+  selectAll: selectAllNotifications
+} = notificationsAdapter.getSelectors(state => state.notifications)
+// export const selectAllNotifications = state => state.notifications.notifications
 
